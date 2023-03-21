@@ -110,18 +110,25 @@ def pause():
 @app.route("/rewind", methods=["POST"])
 def rewind():
     video_id = request.form["video_id"]
+    value = request.form["rewind_count"]
 
-    fastforward_cur_audio(-10)
+    for i in range(len(videos)):
+        if videos[i].id == video_id:
+            videos[i] = videos[i]._replace(rewind_count=int(value))
+            break
+    print(value)
+
+    fastforward_cur_audio(int(value))
 
     return redirect(url_for("video", video_id=video_id))
 
-@app.route("/fast_forward", methods=["POST"])
-def fast_forward():
-    video_id = request.form["video_id"]
+# @app.route("/fast_forward", methods=["POST"])
+# def fast_forward():
+#     video_id = request.form["video_id"]
 
-    fastforward_cur_audio(10)
+#     fastforward_cur_audio(10)
 
-    return redirect(url_for("video", video_id=video_id))
+#     return redirect(url_for("video", video_id=video_id))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=60000)

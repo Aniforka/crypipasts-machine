@@ -35,12 +35,13 @@
         <input type="submit" value="Пауза">
     </form>
     <form method="post" action="/rewind">
+        <input type="text" name="rewind_count" size="40" value="{{ video.rewind_count }}">
         <input type="hidden" name="video_id" value="{{ video.id }}">
-        <input type="submit" value="Отмотать назад (10с)">
+        <input type="submit" value="Отмотать (назад это -)">
     </form>
-    <form method="post" action="/fast_forward">
+    <!-- <form method="post" action="/fast_forward">
         <input type="hidden" name="video_id" value="{{ video.id }}">
-        <input type="submit" value="Перемотать вперёд (10с)">
-    </form>
+        <input type="submit" value="Перемотать вперёд">
+    </form> -->
 </body>
 </html>

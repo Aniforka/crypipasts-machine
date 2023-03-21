@@ -41,7 +41,7 @@ def pasrse_data(url, file):
 def prepare_data(file):
     data = read_data(file)
 
-    Video = namedtuple("Video", "image title id url volume play_status")
+    Video = namedtuple("Video", "image title id url volume rewind_count play_status")
     videos = list()
 
     try:
@@ -52,6 +52,7 @@ def prepare_data(file):
                 video["id"],
                 video["audio"],
                 50,
+                10,
                 0
             ))
     except Exception as exp: print(exp)
