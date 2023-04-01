@@ -157,7 +157,6 @@ class VideoQueue:
     def getArr(self) -> list[Video]:
         return self.li
     
-    def stabilization(self, real_count):
-        print(len(self.li), real_count)
-        while len(self.li) > real_count - 1 and len(self.li) != 0:
-            self.pop()
+    def clear(self) -> None:
+        self.li.clear()
+        self.active = None

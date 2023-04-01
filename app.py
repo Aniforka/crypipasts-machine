@@ -94,22 +94,32 @@ def request_player_state():
 def player_req_queue():
     data = {
         'queue': [vid.build_dict() for vid in video_que.getArr()],
-        'active': video_que.get_active().build_dict()
+        'active': None if video_que.get_active() is None else video_que.get_active().build_dict()
     }
     print(media_player.current_index, len(media_player.media_list))
     emit('set_player_queue', data)
 
 @socketio.on('q_pop')
-def pop_from_queue(event=None):
+def pop_from_queue():
     vid = video_que.pop()
 
     if vid is None:
         media_player.stop()
         return
 
-    media_player.next()
+    else:
+        media_player.next()
 
     #media_player.resume()
+
+@socketio.on('q_clear')
+def pop_from_queue(event=None):
+    video_que.clear()
+
+    media_player.stop()
+
+    media_player.clear()
+
 
 def auto_next_event(event=None):
     media_player.current_index += 1

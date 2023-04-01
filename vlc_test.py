@@ -32,7 +32,10 @@ class VLCPlayer:
     
     def clear(self):
         self.media_list.unlock()
-        self.media_list.delete()
+
+        for _ in range(len(self.media_list)):
+            self.media_list.remove_index(0)
+
         self.current_index = -1
 
 

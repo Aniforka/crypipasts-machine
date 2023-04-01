@@ -50,6 +50,11 @@
         socket.emit('player_req_queue')
       }
 
+      function clearQueue() {
+        socket.emit("q_clear");
+        socket.emit('player_req_queue')
+      }
+
       socket.on('set_player_queue', function (data)
       {
         q_li = document.getElementById('queue_list')
@@ -103,7 +108,11 @@
 
       function ALARM_PIZDEC()
       {
-        socket.emit('ALARM_PIZDEC')
+        if (confirm("Are you sure?")){
+          if (confirm("Are you ABSOLUTELY sure?")){
+            socket.emit('ALARM_PIZDEC');
+          }
+        }
       }
     </script>
     <meta charset="UTF-8" />
@@ -181,12 +190,12 @@
         >
           Следующая крипипаца
         </button>
-        <button type="button" class="col btn btn-warning">
+        <button type="button" class="col btn btn-warning" onclick="clearQueue()">
           Очистка очереди
         </button>
       </div>
       <div class="row">
-        {% if not active_video %}
+        {% if not active_video or active_video is None %}
         <div class="col" id="now_playing_title">Сейчас ничего не воспроизводится</div>
         {% else %}
         <div class="col" id="now_playing_title">Сейчас воспроизводится: {{active_video.title}}</div>
