@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ video.title }}</title>
+</head>
+<body>
+    <form method="post" action="/change_volume">
+        <input type="range" name="volume" min="0" max="100" step="5" value="{{ video.volume }}" list="tickmarks">
+        <datalist id="tickmarks">
+            <option value="0" label="0%"></option>
+            <option value="10"></option>
+            <option value="20"></option>
+            <option value="30"></option>
+            <option value="40"></option>
+            <option value="50" label="50%"></option>
+            <option value="60"></option>
+            <option value="70"></option>
+            <option value="80"></option>
+            <option value="90"></option>
+            <option value="100" label="100%"></option>
+        </datalist>
+        <input type="hidden" name="video_id" value="{{ video.id }}">
+        <label for="volume">Громкость</label>
+        <input type="submit" value="Изменить">
+    </form>
+    <form method="post" action="/play">
+        <input type="hidden" name="video_id" value="{{ video.id }}">
+        <input type="submit" value="Воспроизвести">
+    </form>
+    <form method="post" action="/pause">
+        <input type="hidden" name="video_id" value="{{ video.id }}">
+        <input type="submit" value="Пауза">
+    </form>
+    <form method="post" action="/rewind">
+        <input type="text" name="rewind_count" size="40" value="{{ video.rewind_count }}">
+        <input type="hidden" name="video_id" value="{{ video.id }}">
+        <input type="submit" value="Отмотать (назад это -)">
+    </form>
+    <!-- <form method="post" action="/fast_forward">
+        <input type="hidden" name="video_id" value="{{ video.id }}">
+        <input type="submit" value="Перемотать вперёд">
+    </form> -->
+</body>
+</html>
