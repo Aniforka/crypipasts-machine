@@ -106,6 +106,32 @@
         }
       }, 1000);
 
+
+      function not_loop()
+      {
+        socket.emit("looping", {
+          loop_media: 0,
+          loop_playlist: 0
+        });
+      }
+
+      function loop_media()
+      {
+        socket.emit("looping", {
+          loop_media: 1,
+          loop_playlist: 0
+        });
+      }
+
+      function loop_playlist()
+      {
+        socket.emit("looping", {
+          loop_media: 0,
+          loop_playlist: 1
+        });
+      }
+
+
       function ALARM_PIZDEC()
       {
         if (confirm("Are you sure?")){
@@ -200,6 +226,16 @@
         {% else %}
         <div class="col" id="now_playing_title">Сейчас воспроизводится: {{active_video.title}}</div>
         {% endif %}
+      </div>
+      <div class="btn-group" role="group" aria-label="Loop button group">
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" onclick="not_loop()" checked>
+        <label class="btn btn-outline-primary" for="btnradio1">Без зацикливания</label>
+      
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" onclick="loop_media()" disabled>
+        <label class="btn btn-outline-primary" for="btnradio2">Зациклить аудио</label>
+      
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" disabled>
+        <label class="btn btn-outline-primary" for="btnradio3">Зациклить плейлист</label>
       </div>
     </div>
     <div class="container overflow-hidden" id="queue_list">

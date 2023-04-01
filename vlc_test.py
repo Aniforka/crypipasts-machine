@@ -6,11 +6,14 @@ class VLCPlayer:
         self.player = self.instance.media_player_new()
         self.media_list = self.instance.media_list_new()
         self.media_list_player = self.instance.media_list_player_new()
+
         self.media_list_player.set_media_player(self.player)
         self.media_list_player.set_media_list(self.media_list)
         self.current_index = -1
 
         self.events = self.player.event_manager()
+        self.isLoopMedia = False
+        self.isLoopPlaylist = False
 
     def add_event(self, eventType, func):
         self.events.event_attach(eventType, func)
@@ -38,6 +41,35 @@ class VLCPlayer:
 
         self.current_index = -1
 
+    def loop_media(self):
+        self.player.set_playback_mode(vlc.PlaybackMode.loop)
+
+    def unloop_media(self):
+        self.player.set_playback_mode(vlc.PlaybackMode.default)
+
+    def loop_playlist(self):
+        self.media_list_player.set_playback_mode(vlc.PlaybackMode.loop)
+
+    def unloop_playlist(self):
+        self.media_list_player.set_playback_mode(vlc.PlaybackMode.default)
+
+    def switch_loop_media(self):
+        if self.isLoopMedia:
+            self.unloop_media()
+        else:
+            self.loop_media()
+
+        self.isLoopMedia = not self.isLoopMedia
+
+    def switch_loop_playlist(self):
+        if self.isLoopPlaylist:
+            self.unloop_playlist()
+        else:
+            self.loop_playlist()
+
+        self.isLoopPlaylist = not self.isLoopPlaylist
+
+
 
     def add_to_playlist(self, path):
         media = self.instance.media_new(path)
@@ -57,9 +89,11 @@ class VLCPlayer:
         self.media_list_player.stop()
 
     def next(self):
-        self.current_index += 1
         if self.current_index >= len(self.media_list):
-            self.current_index = 0
+            self.stop()
+            return
+        
+        self.current_index += 1
         self.media_list_player.play_item_at_index(self.current_index)
 
     def previous(self):
@@ -76,7 +110,3 @@ class VLCPlayer:
 
     def get_duration(self):
         return self.player.get_length() / 1000
-
-# Было добавлено создание атрибута media, чтобы можно было работать с текущим медиафайлом.
-# Был убран лишний аргумент enumerate() в методе get_current_playlist(). 
-# Метод add_to_playlist() теперь использует атрибут media, чтобы работать с текущим медиафайлом.

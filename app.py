@@ -3,7 +3,7 @@
 # from audio import *
 # from get_info_channel import *
 # напиши класс для работы с VLC плеером на Python. Добавь регулировку громкости, длительности и их получения, а также очередь аудио туда добавь, чтобы её можно было менять, и следующее аудио АВТОМАТИЧЕСКИ проигрывалось после того, как заканчивается текущее, а ещё возможность добавлять в очередь аудио БЕЗ прерывания текущего проигрывания 
-# Python VLC media_list функция очистки
+# Python VLC метод loop для отдельного аудио и для media_list, а также ОБЯЗАТЕЛЬНО добавить функцию отключения loop
 import os
 import vlc
 import wget
@@ -101,14 +101,14 @@ def player_req_queue():
 
 @socketio.on('q_pop')
 def pop_from_queue():
+    print(media_player.current_index, len(media_player.media_list))
     vid = video_que.pop()
 
     if vid is None:
         media_player.stop()
         return
 
-    else:
-        media_player.next()
+    media_player.next()
 
     #media_player.resume()
 
@@ -120,9 +120,28 @@ def pop_from_queue(event=None):
 
     media_player.clear()
 
+@socketio.on('looping')
+def switch_looping(data):
+    loop_media = int(data["loop_media"])
+    loop_playlist = int(data["loop_playlist"])
+
+    if loop_media:
+        media_player.loop_media()
+        media_player.unloop_playlist()
+    elif loop_playlist:
+        media_player.unloop_media()
+        media_player.loop_playlist()
+    else:
+        media_player.unloop_media()
+        media_player.unloop_playlist()
+
 
 def auto_next_event(event=None):
-    media_player.current_index += 1
+    print(media_player.current_index, len(media_player.media_list))
+
+    if media_player.current_index + 1 < len(media_player.media_list):
+        media_player.current_index += 1
+
     video_que.pop()
 
 @socketio.on('player_volume')
