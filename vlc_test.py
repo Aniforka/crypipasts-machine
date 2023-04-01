@@ -39,6 +39,7 @@ class VLCPlayer:
     def add_to_playlist(self, path):
         media = self.instance.media_new(path)
         self.media_list.add_media(media)
+        self.current_index += 1
 
     def play(self):
         if self.current_index < 0:
