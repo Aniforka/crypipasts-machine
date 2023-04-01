@@ -111,7 +111,8 @@ def pop_from_queue(event=None):
 
     #media_player.resume()
 
-def pop_from_queue_event(event=None):
+def auto_next_event(event=None):
+    media_player.current_index += 1
     video_que.pop()
 
 @socketio.on('player_volume')
@@ -144,5 +145,5 @@ def pizdec():
     channel = None
 
 if __name__ == "__main__":
-    media_player.add_event(vlc.EventType.MediaPlayerEndReached, pop_from_queue_event)
+    media_player.add_event(vlc.EventType.MediaPlayerEndReached, auto_next_event)
     socketio.run(app, host='0.0.0.0', port=60000)
