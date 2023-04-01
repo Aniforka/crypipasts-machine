@@ -156,4 +156,4 @@ def pizdec():
 
 if __name__ == "__main__":
     media_player.add_event(vlc.EventType.MediaPlayerEndReached, auto_next_event)
-    socketio.run(app, host='0.0.0.0', port=60000)
+    socketio.run(app, host='0.0.0.0', port=60000, allow_unsafe_werkzeug=True)
