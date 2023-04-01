@@ -96,6 +96,7 @@ def player_req_queue():
         'queue': [vid.build_dict() for vid in video_que.getArr()],
         'active': video_que.get_active().build_dict()
     }
+    print(media_player.current_index, len(media_player.media_list))
     emit('set_player_queue', data)
 
 @socketio.on('q_pop')
@@ -107,7 +108,6 @@ def pop_from_queue(event=None):
         return
 
     media_player.next()
-    #media_player.add_event(vlc.EventType.MediaPlayerEndReached, pop_from_queue)
 
     #media_player.resume()
 
