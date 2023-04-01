@@ -195,7 +195,7 @@
         </button>
       </div>
       <div class="row">
-        {% if not active_video or active_video is None %}
+        {% if not active_video %}
         <div class="col" id="now_playing_title">Сейчас ничего не воспроизводится</div>
         {% else %}
         <div class="col" id="now_playing_title">Сейчас воспроизводится: {{active_video.title}}</div>
