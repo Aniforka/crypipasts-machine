@@ -67,17 +67,9 @@
         data.queue.forEach(element => {
             console.log(element)
             q_li.innerHTML += 
-            `<div class="row gx-5">
-                    <div class="col">
-                    <div class="card">
-                        <div class="card-body">
-                        <h5 class="card-title">${element.title}</h5>
-                        </div>
-                    </div>
-                    </div>
-                </div>`
+            `<li class="list-group-item">${element.title}</li>`
         });
-        document.getElementById('now_playing_title').innerHTML = data.active.title
+        document.getElementById('now_playing_title').innerHTML = `${data.active.title}`
       })
 
       socket.on("set_player_state", function (data) {
@@ -264,11 +256,13 @@
       </div>
 
       <div class="card bg-light text-dark mt-2">
-        {% if not active_video %}
-        <div class="card-body" id="now_playing_title">Сейчас ничего не воспроизводится</div>
-        {% else %}
-        <div class="card-body" id="now_playing_title">Сейчас воспроизводится: {{active_video.title}}</div>
-        {% endif %}
+        <div class="card-body text-success fw-bold" id="now_playing_title">
+          {% if not active_video %}
+          Сейчас ничего не воспроизводится
+          {% else %}
+          {{active_video.title}}
+          {% endif %}
+        </div>
       </div>
 
       <div class="btn-group mt-2" role="group" aria-label="Loop button group">
