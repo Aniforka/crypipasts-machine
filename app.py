@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# from audio import *
-# from get_info_channel import *
-# напиши класс для работы с VLC плеером на Python. Добавь регулировку громкости, длительности и их получения, а также очередь аудио туда добавь, чтобы её можно было менять, и следующее аудио АВТОМАТИЧЕСКИ проигрывалось после того, как заканчивается текущее, а ещё возможность добавлять в очередь аудио БЕЗ прерывания текущего проигрывания 
-# Python VLC метод loop для отдельного аудио и для media_list, а также ОБЯЗАТЕЛЬНО добавить функцию отключения loop
+# Python VLC напиши зацикливание для отдельного аудио, а также ОБЯЗАТЕЛЬНО добавить функцию отключения зацикливания. ПИШИ ПО БИБЛИОТЕКЕ
 import os
 import vlc
 import wget
@@ -85,7 +82,9 @@ def request_player_state():
         'isPlaying': media_player.isPlaying(),
         'sound': media_player.get_volume(),
         'cur_pos': int(media_player.get_position()),
-        'duration': int(media_player.get_duration())
+        'duration': int(media_player.get_duration()),
+        'isLoopMedia': media_player.isLoopMedia,
+        'isLoopPlaylist': media_player.isLoopPlaylist
     }
     print(data)
     emit('set_player_state', data)
@@ -122,8 +121,9 @@ def pop_from_queue(event=None):
 
 @socketio.on('looping')
 def switch_looping(data):
-    loop_media = int(data["loop_media"])
-    loop_playlist = int(data["loop_playlist"])
+    loop_media = bool(data["loop_media"])
+    loop_playlist = bool(data["loop_playlist"])
+    print(loop_media, loop_playlist)
 
     if loop_media:
         media_player.loop_media()
@@ -134,6 +134,9 @@ def switch_looping(data):
     else:
         media_player.unloop_media()
         media_player.unloop_playlist()
+
+    media_player.isLoopMedia = loop_media
+    media_player.isLoopPlaylist = loop_playlist
 
 
 def auto_next_event(event=None):
@@ -158,6 +161,9 @@ def changePosition(data):
 def playerToggle(data):
     isPlaying = bool(data['value'])
     if isPlaying:
+        if media_player.current_index == -1:
+            video_que.pop()
+
         media_player.play()
     else:
         media_player.pause()

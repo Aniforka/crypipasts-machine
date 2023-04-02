@@ -28,6 +28,11 @@
         socket.emit("player_volume", { value: parseInt(new_val) });
         console.log(new_val);
       }
+
+      var isLoopMedia = false;
+      var isLoopPlaylist = false;
+
+
       var isPlaying = false;
       var duration = 1;
       function onTogglePlay() {
@@ -76,6 +81,17 @@
       })
 
       socket.on("set_player_state", function (data) {
+        //var aria = document.querySelector('[aria-label="Loop button group"]');
+        var not_looping = document.getElementById("btnradio1");
+        var looping_media = document.getElementById("btnradio2");
+        var looping_playlist = document.getElementById("btnradio3");
+
+        isLoopMedia = data.isLoopMedia;
+        isLoopPlaylist = data.isLoopPlaylist;
+        looping_media.checked = isLoopMedia;
+        looping_playlist.checked = isLoopPlaylist;
+
+
         isPlaying = data.isPlaying;
         btn = document.getElementById("togglePlay");
         if (!isPlaying) {
@@ -106,30 +122,56 @@
         }
       }, 1000);
 
+      
 
-      function not_loop()
+      function looping()
       {
+        //var aria = document.querySelector('[aria-label="Loop button group"]');
+        var not_looping = document.getElementById("btnradio1");
+        var looping_media = document.getElementById("btnradio2");
+        var looping_playlist = document.getElementById("btnradio3");
+
+        isLoopMedia = looping_media.checked;
+        isLoopPlaylist = looping_playlist.checked;
+
         socket.emit("looping", {
-          loop_media: 0,
-          loop_playlist: 0
+          loop_media: isLoopMedia,
+          loop_playlist: isLoopPlaylist
         });
       }
 
-      function loop_media()
-      {
-        socket.emit("looping", {
-          loop_media: 1,
-          loop_playlist: 0
-        });
-      }
+      // function not_loop()
+      // {
+      //   isLoopMedia = false;
+      //   isLoopPlaylist = false;
 
-      function loop_playlist()
-      {
-        socket.emit("looping", {
-          loop_media: 0,
-          loop_playlist: 1
-        });
-      }
+      //   socket.emit("looping", {
+      //     loop_media: isLoopMedia,
+      //     loop_playlist: isLoopPlaylist
+      //   });
+      // }
+
+      // function loop_media()
+      // {
+      //   isLoopMedia = true;
+      //   isLoopPlaylist = false;
+
+      //   socket.emit("looping", {
+      //     loop_media: isLoopMedia,
+      //     loop_playlist: isLoopPlaylist
+      //   });
+      // }
+
+      // function loop_playlist()
+      // {
+      //   isLoopMedia = false;
+      //   isLoopPlaylist = true;
+
+      //   socket.emit("looping", {
+      //     loop_media: isLoopMedia,
+      //     loop_playlist: isLoopPlaylist
+      //   });
+      // }
 
 
       function ALARM_PIZDEC()
@@ -228,10 +270,10 @@
         {% endif %}
       </div>
       <div class="btn-group" role="group" aria-label="Loop button group">
-        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" onclick="not_loop()" checked>
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" onclick="looping()" checked>
         <label class="btn btn-outline-primary" for="btnradio1">Без зацикливания</label>
       
-        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" onclick="loop_media()" disabled>
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" onclick="looping()" disabled>
         <label class="btn btn-outline-primary" for="btnradio2">Зациклить аудио</label>
       
         <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" disabled>

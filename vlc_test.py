@@ -42,10 +42,10 @@ class VLCPlayer:
         self.current_index = -1
 
     def loop_media(self):
-        self.player.set_playback_mode(vlc.PlaybackMode.loop)
+        pass
 
     def unloop_media(self):
-        self.player.set_playback_mode(vlc.PlaybackMode.default)
+        pass
 
     def loop_playlist(self):
         self.media_list_player.set_playback_mode(vlc.PlaybackMode.loop)
