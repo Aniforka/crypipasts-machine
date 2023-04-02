@@ -31,12 +31,14 @@
                     console.log(element);
                     new_created_element = document.createElement('div')
                     new_created_element.innerHTML = `
-                    <div class="card" style="width: 18rem">
-                        <img src="${element.thumbnail}" class="card-img-top" alt="..."/>
-                        <div class="card-body">
-                        <h5 class="card-title">${element.title}</h5>
-                        <p class="card-text">Продолжительность: ${element.duration}</p>
-                    </div>
+                    <li class="dropdown-item">
+                      <div class="card" style="width: 18rem">
+                          <img src="${element.thumbnail}" class="card-img-top" alt="..."/>
+                          <div class="card-body">
+                          <h5 class="card-title">${element.title}</h5>
+                          <p class="card-text">Продолжительность: ${element.duration}</p>
+                      </div>
+                    </li>
                     `
                     prew_li.appendChild(new_created_element)
                 }
@@ -76,9 +78,8 @@
                 aria-expanded="false"
                 >Очередь воспроизведения</a
               >
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li id="video_queue_prew">
-                </li>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" id="video_queue_prew">
+                
               </ul>
             </li>
           </ul>
