@@ -24,7 +24,7 @@
             data = document.getElementById('channel_name').value
             $.ajax({
                 url: `/api/set_channel?target=${data}`,
-                type: "GET",
+                type: "POST",
                 success: function (response) {
                     document.getElementById('channel_set_response').innerHTML = JSON.stringify(response)
                 }
@@ -35,9 +35,19 @@
             data = document.getElementById('video_url').value
             $.ajax({
                 url: `/api/queue_add_video?target=${data}`,
-                type: "GET",
+                type: "POST",
                 success: function (response) {
                     document.getElementById('video_url_response').innerHTML = JSON.stringify(response)
+                }
+            });
+        }
+        function updateData()
+        {
+            $.ajax({
+                url: `/api/update_data`,
+                type: "GET",
+                success: function (response) {
+                    document.getElementById('update_response').innerHTML = JSON.stringify(response)
                 }
             });
         }
@@ -69,23 +79,7 @@
     </div>
   </nav>
   <div class="container overflow-hidden">
-    <div class="row gx-5">
-        <div class="col">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Установить канал в качестве основного</h5>
-              <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon3">api/set_channel?target=</span>
-                <input type="text" class="form-control" id="channel_name" aria-describedby="basic-addon3 basic-addon4">
-              </div>
-              <button class="btn btn-primary" onclick="onSetChannel()">Выполнить</a>
-            </div>
-            <div class="input-group">
-                <span class="input-group-text">Ответ</span>
-                <textarea class="form-control" aria-label="With textarea" readonly id="channel_set_response"></textarea>
-              </div>
-          </div>
-        </div>
+
       <div class="row gx-5">
         <div class="col">
           <div class="card">
@@ -100,10 +94,50 @@
             <div class="input-group">
                 <span class="input-group-text">Ответ</span>
                 <textarea class="form-control" aria-label="With textarea" readonly id="video_url_response"></textarea>
-              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      <div class="row gx-5 mt-2">
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Обновить информацию о текущем канале</h5>
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon3">api/update_data</span>
+                <!-- <input type="text" class="form-control" id="update_data" aria-describedby="basic-addon3 basic-addon4" disabled> -->
+                <button class="btn btn-primary" onclick="updateData()">Выполнить</a>
+              </div>
+              
+            </div>
+            <div class="input-group">
+                <span class="input-group-text">Ответ</span>
+                <textarea class="form-control" aria-label="With textarea" readonly id="update_response"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row gx-5 mt-2">
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Установить канал в качестве основного</h5>
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon3">api/set_channel?target=</span>
+                <input type="text" class="form-control" id="channel_name" aria-describedby="basic-addon3 basic-addon4">
+              </div>
+              <button class="btn btn-primary" onclick="onSetChannel()">Выполнить</a>
+            </div>
+            <div class="input-group">
+                <span class="input-group-text">Ответ</span>
+                <textarea class="form-control" aria-label="With textarea" readonly id="channel_set_response"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </body>

@@ -41,20 +41,20 @@ def player_page():
 def api_page():
     return render_template('api.html')
 
-@app.route("/update_data", methods=["POST"])
+@app.route("/api/update_data", methods=["GET"])
 def update_data():
     channel.fetch_videos()
     channel.serialize_to_json('yt_data.json')
-    return redirect(url_for("index"))
+    return jsonify({'status': 200})
 
-@app.route('/api/set_channel')
+@app.route('/api/set_channel', methods=["POST"])
 def api_set_channel():
     target = request.args.get('target', URL)
     channel.url = target
     channel.videos.clear()
     return jsonify({'status': 200, 'channel': target})
 
-@app.route('/api/queue_add_video')
+@app.route('/api/queue_add_video', methods=["POST"])
 def api_queue_add_video():
     target = request.args.get('target', '')
     if target == '':
