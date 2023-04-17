@@ -15,14 +15,21 @@ AUDIO_FILE = "cripipats.mp3"
 
 import patslib
 import vlc_test
+
 channel = patslib.YouTubeChannel(URL)
+
 if 'yt_data.json' in os.listdir('.'):
     channel.deserialize_from_json('yt_data.json')
+
+archive = patslib.Archive('archive_data.json')
+archive.deserialize_from_json()
+
 video_que = patslib.VideoQueue()
 media_player = vlc_test.VLCPlayer()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
+
 #Video = namedtuple("Video", "image title id url volume")
 #videos = [Video("http://i0.kym-cdn.com/photos/images/newsfeed/000/538/345/7ad.png", "NANOMACHINES SON", "346HSR6U7", "abober", "10")]
 
@@ -30,7 +37,7 @@ socketio = SocketIO(app)
 @app.route('/', methods=["GET"])
 def index():
     videos = channel.videos
-    return render_template("index.html", videos=videos, queue_list=videos.values())
+    return render_template("index.html", videos=videos, queue_list=videos.values(), archive=archive.videos)
 
 @app.route('/player', methods=["GET"])
 def player_page():
@@ -47,14 +54,14 @@ def update_data():
     channel.serialize_to_json('yt_data.json')
     return jsonify({'status': 200})
 
-@app.route('/api/set_channel', methods=["POST"])
+@app.route('/api/set_channel', methods=["POST", "GET"])
 def api_set_channel():
     target = request.args.get('target', URL)
     channel.url = target
     channel.videos.clear()
     return jsonify({'status': 200, 'channel': target})
 
-@app.route('/api/queue_add_video', methods=["POST"])
+@app.route('/api/queue_add_video', methods=["POST", "GET"])
 def api_queue_add_video():
     target = request.args.get('target', '')
     if target == '':
@@ -78,13 +85,15 @@ def request_queue():
 
 @socketio.on('request_player_state')
 def request_player_state():
+    vid_id = None if video_que.get_active() is None else video_que.get_active().video_id
     data = {
         'isPlaying': media_player.isPlaying(),
         'sound': media_player.get_volume(),
         'cur_pos': int(media_player.get_position()),
         'duration': int(media_player.get_duration()),
         'isLoopMedia': media_player.isLoopMedia,
-        'isLoopPlaylist': media_player.isLoopPlaylist
+        'isLoopPlaylist': media_player.isLoopPlaylist,
+        'video_id': vid_id
     }
     print(data)
     emit('set_player_state', data)
@@ -101,6 +110,10 @@ def player_req_queue():
 @socketio.on('q_pop')
 def pop_from_queue():
     print(media_player.current_index, len(media_player.media_list))
+
+    #archive.save_record()
+    #archive.serialize_to_json()
+
     vid = video_que.pop()
 
     if vid is None:
@@ -110,6 +123,11 @@ def pop_from_queue():
     media_player.next()
 
     #media_player.resume()
+
+@socketio.on('update_archive_record')
+def arch_update(data):
+    #archive.update_record(data["video_id"], data["cur_pos"], data["max_pos"])
+    pass
 
 @socketio.on('q_clear')
 def pop_from_queue(event=None):
@@ -142,10 +160,14 @@ def switch_looping(data):
 def auto_next_event(event=None):
     print(media_player.current_index, len(media_player.media_list))
 
+    #archive.save_record()
+
     if media_player.current_index + 1 < len(media_player.media_list):
         media_player.current_index += 1
 
     video_que.pop()
+
+    #archive.serialize_to_json()
 
 @socketio.on('player_volume')
 def changeVolume(data):

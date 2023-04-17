@@ -99,6 +99,12 @@
         )}:${data.cur_pos % 60}/${parseInt(data.duration / 60)}:${
           data.duration % 60
         }`;
+        console.log(data.cur_pos, data.duration)
+        socket.emit("update_archive_record", {
+            video_id: data.video_id,
+            cur_pos: data.cur_pos,
+            max_pos: data.duration
+          });
 
         if (data.cur_pos >= data.duration && data.cur_pos > 0)
         {

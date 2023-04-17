@@ -3,6 +3,7 @@ import scrapetube
 import json
 import vlc
 from pprint import pprint
+import os
 
 class Video:
     title = ''
@@ -11,6 +12,7 @@ class Video:
     thumbnail_url = ''
     video_id = ''
     video_endpoint = None
+
     def __init__(self, scrapper_video, no_init=False) -> None:
         if no_init:
             return
@@ -69,7 +71,7 @@ class YouTubeChannel:
         
     def serialize_to_json(self, fname):
         f = open(fname, 'w', encoding='UTF-8')
-        json.dump({vid.video_id: vid.build_dict() for vid in self.videos.values()}, f, indent=4)
+        json.dump({vid.video_id: vid.build_dict() for vid in self.videos.values()}, f, indent=4, ensure_ascii=False)
         f.close()
         
     def deserialize_from_json(self, fname):
@@ -160,3 +162,69 @@ class VideoQueue:
     def clear(self) -> None:
         self.li.clear()
         self.active = None
+
+class ArchiveRecord:
+    FINISHED_CONDITION = 0.9
+
+    @staticmethod
+    def construct_record(video_id, cur_duration, max_duration):
+        FINISHED_CONDITION = 0.9
+        record = dict()
+
+        if video_id is None:
+            return None
+        
+        if max_duration == 0:
+            return None
+
+        if cur_duration / max_duration > FINISHED_CONDITION:
+            status = 'FINISHED'
+        else:
+            status = 'STARTED'
+
+        record = {
+            video_id : {
+                'status': status,
+                'duration': cur_duration,
+                'percent': round(cur_duration / max_duration)
+            }
+        }
+
+        return record
+
+
+class Archive:
+    def __init__(self, fname) -> None:
+        self.fname = fname
+        self.videos = dict()
+        self.record = None
+
+    def serialize_to_json(self):
+        f = open(self.fname, 'w', encoding='UTF-8')
+        json.dump(self.videos, f, indent=4, ensure_ascii=False)
+        f.close()
+        
+    def deserialize_from_json(self):
+        if self.fname in os.listdir('.'):
+            f = open(self.fname, 'r', encoding='UTF-8')
+            data = json.load(f)
+            f.close()
+            self.videos = data
+
+    def update_record(self, video_id, cur_duration, max_duration):
+        self.record = ArchiveRecord.construct_record(video_id, cur_duration, max_duration)
+
+    def save_record(self):
+        if self.record is not None:
+            self.videos.update(self.record)
+
+    def __getitem__(self, video_id: str) -> dict:
+        return self.videos.get(video_id, None)
+    
+    def __del__(self):
+        if self.record is not None:
+            self.save_record()
+
+        self.serialize_to_json()
+
+    # <div class="progress-bar bg-danger" role="progressbar" style="width: {{ archive[video.video_id]['percent'] }}%" aria-valuenow="{{ archive[video.video_id]['percent'] }}" aria-valuemin="0" aria-valuemax="100"></div>
