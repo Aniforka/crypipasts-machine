@@ -1,3 +1,4 @@
+import youtube_dl
 import yt_dlp
 import scrapetube
 import json
@@ -51,7 +52,20 @@ class Video:
 
     def make_working_endpoint(self):
         with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
-            self.video_endpoint = ydl.extract_info(f'https://www.youtube.com/watch?v={self.video_id}', download=False)["requested_formats"][1]["url"]
+            # full_info = ydl.extract_info(f'https://www.youtube.com/watch?v={self.video_id}', download=False)
+            # json.dump(full_info, open('debug_video.json', 'w', encoding='UTF-8'), indent=4)
+
+            #self.video_endpoint = ydl.extract_info(f'https://www.youtube.com/watch?v={self.video_id}', download=False)["requested_formats"][1]["url"]
+            pass
+    
+        ydl_opts = {
+            'format': 'bestaudio',
+        }
+
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(
+                f'https://www.youtube.com/watch?v={self.video_id}', download=False)
+            self.video_endpoint = info['formats'][0]['url']
 
     def build_dict(self):
         return {'duration': self.duration,
@@ -65,6 +79,7 @@ class YouTubeChannel:
         self.videos = dict()
 
     def fetch_videos(self):
+        self.videos = dict()
         for ind, vid in enumerate(scrapetube.get_channel(channel_url=self.url)):
             new_vid = Video(vid)
             self.videos[new_vid.video_id] = new_vid

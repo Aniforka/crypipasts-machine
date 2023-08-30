@@ -3,7 +3,6 @@
 # Python VLC напиши зацикливание для отдельного аудио, а также ОБЯЗАТЕЛЬНО добавить функцию отключения зацикливания. ПИШИ ПО БИБЛИОТЕКЕ
 import os
 import vlc
-import wget
 import time
 import requests
 from pytube import YouTube
