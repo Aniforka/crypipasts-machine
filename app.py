@@ -72,6 +72,36 @@ def api_queue_add_video():
     media_player.add_to_playlist(vid.video_endpoint)
     return jsonify({'status': 200, 'id': vid.video_id})
 
+@app.route('/api/set_volume', methods=["POST", "GET"])
+def api_set_volume():
+    target = request.args.get('target', '')
+    if target == '':
+        return jsonify({'status': 404, 'msg': 'Пустой аргумент target'})
+    
+    value = max(0, min(int(target), 100))
+    media_player.set_volume(value)
+
+    return jsonify({'status': 200, 'volume': value})
+
+@app.route('/api/get_volume', methods=["GET"])
+def api_get_volume():
+    value = media_player.get_volume()
+
+    return jsonify({'status': 200, 'volume': value})
+
+@app.route('/api/change_volume', methods=["POST", "GET"])
+def api_change_volume():
+    target = request.args.get('target', '')
+    if target == '':
+        return jsonify({'status': 404, 'msg': 'Пустой аргумент target'})
+    
+    value = media_player.get_volume()
+    value = max(0, min(value + int(target), 100))
+    media_player.set_volume(value)
+
+    return jsonify({'status': 200, 'volume': value})
+
+
 @socketio.on('q_push')
 def push_to_queue(data):
     channel[data['y_id']].make_working_endpoint()
