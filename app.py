@@ -101,6 +101,18 @@ def api_change_volume():
 
     return jsonify({'status': 200, 'volume': value})
 
+@app.route('/api/q_pop', methods=["POST", "GET"])
+def api_q_pop():
+    vid = video_que.pop()
+
+    if vid is None:
+        media_player.stop()
+        return jsonify({'status': 404, 'msg': 'Видео в очереди отсутствует'})
+
+    media_player.next()
+
+    return jsonify({'status': 200})
+
 
 @socketio.on('q_push')
 def push_to_queue(data):
